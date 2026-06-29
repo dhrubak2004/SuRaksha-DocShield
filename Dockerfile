@@ -1,6 +1,5 @@
 FROM python:3.11-slim
 
-# System packages (all offline after build)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     tesseract-ocr \
     tesseract-ocr-eng \
@@ -10,16 +9,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-
-COPY requirements.txt .
+COPY . .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+EXPOSE 8501
 
-# Create data directory
-RUN mkdir -p /app/data
-
-EXPOSE 8000 8501
-
-# Default: run both services via shell script
-CMD ["bash", "start.sh"]
+CMD ["streamlit", "run", "frontend/dashboard.py", \
+     "--server.port", "8501", \
+     "--server.address", "0.0.0.0", \
+     "--server.headless", "true", \
+     "--browser.gatherUsageStats", "false"]
