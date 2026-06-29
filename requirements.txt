@@ -1,6 +1,6 @@
 # SuRaksha DocShield — Python dependencies
 
-# Core
+# Core (keep for local dev; not used by Streamlit-only Render deploy)
 fastapi>=0.110.0
 uvicorn[standard]>=0.29.0
 python-multipart>=0.0.9
@@ -9,7 +9,7 @@ python-multipart>=0.0.9
 Pillow>=10.0.0
 opencv-python-headless>=4.9.0
 numpy>=1.26.0
-scikit-image>=0.22.0        # ADD: needed for ELA in visual_forensics.py
+scikit-image>=0.22.0
 
 # PDF support
 PyPDF2>=3.0.0
@@ -20,13 +20,8 @@ pytesseract>=0.3.10
 
 # NLP / metadata
 exifread>=3.0.0
+python-Levenshtein>=0.25.0
 
 # Dashboard
 streamlit>=1.35.0
 plotly>=5.20.0
-
-# Crypto / hashing (stdlib hashlib is enough, but if you use extras)
-# nothing extra needed for SHA-256
-
-# Distance/fuzzy matching (used in name consistency checks)
-python-Levenshtein>=0.25.0  # ADD: likely used in semantic_nlp.py
