@@ -1,42 +1,28 @@
-#!/usr/bin/env bash
-# SuRaksha DocShield — Start both FastAPI backend and Streamlit dashboard
-
+#!/bin/bash
 set -e
-
-ROOT="$(cd "$(dirname "$0")" && pwd)"
 
 echo "================================================================="
 echo "  🛡️  SuRaksha DocShield  —  Fully Offline Document Forensics"
 echo "================================================================="
 
-# ── FastAPI backend ──────────────────────────────────────────────────
-echo ""
-echo "▶  Starting FastAPI backend on http://localhost:8000 ..."
-cd "$ROOT/backend"
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload &
+# FastAPI runs on a fixed internal port (not exposed publicly)
+BACKEND_PORT=8000
+
+echo "▶  Starting FastAPI backend on http://localhost:$BACKEND_PORT ..."
+cd /app/backend
+uvicorn main:app --host 0.0.0.0 --port $BACKEND_PORT &
 BACKEND_PID=$!
 echo "   Backend PID: $BACKEND_PID"
 
-sleep 2
+# Wait for backend to be ready
+sleep 3
 
-# ── Streamlit dashboard ──────────────────────────────────────────────
-echo ""
-echo "▶  Starting Streamlit dashboard on http://localhost:8501 ..."
-cd "$ROOT"
+echo "▶  Starting Streamlit dashboard on port $PORT ..."
+cd /app
 streamlit run frontend/dashboard.py \
-    --server.port 8501 \
-    --server.address 0.0.0.0 \
-    --server.headless true \
-    --server.fileWatcherType none &
-DASHBOARD_PID=$!
-echo "   Dashboard PID: $DASHBOARD_PID"
+  --server.port $PORT \
+  --server.address 0.0.0.0 \
+  --server.headless true \
+  --browser.gatherUsageStats false
 
-echo ""
 echo "================================================================="
-echo "  ✅  Both services running:"
-echo "      FastAPI  → http://localhost:8000/docs"
-echo "      Dashboard→ http://localhost:8501"
-echo "================================================================="
-
-# Wait for both
-wait $BACKEND_PID $DASHBOARD_PID
